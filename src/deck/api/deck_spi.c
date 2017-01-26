@@ -136,6 +136,11 @@ void spiBegin(void)
   /*!< SPI configuration */
   spiConfigureSlow();
 
+  // Enable peripheral
+  SPI_Cmd(SPI, ENABLE);
+
+  /*If you wish to shut down the SPI interface, call SPI_Cmd(SPI, DISABLE);*/
+
   isInit = true;
 }
 
@@ -251,15 +256,10 @@ bool spiExchange(size_t length, const uint8_t * data_tx, uint8_t * data_rx)
   SPI_I2S_DMACmd(SPI, SPI_I2S_DMAReq_Tx, ENABLE);
   SPI_I2S_DMACmd(SPI, SPI_I2S_DMAReq_Rx, ENABLE);
 
-  // Enable peripheral
-  SPI_Cmd(SPI, ENABLE);
-
   // Wait for completion
   bool result = (xSemaphoreTake(txComplete, portMAX_DELAY) == pdTRUE)
              && (xSemaphoreTake(rxComplete, portMAX_DELAY) == pdTRUE);
 
-  // Disable peripheral
-  SPI_Cmd(SPI, DISABLE);
   return result;
 }
 
